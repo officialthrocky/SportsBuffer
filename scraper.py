@@ -87,8 +87,6 @@ def dataframes_for_team(teamname):
 def print_team_dataframes(team_dfs):
     Titles = ["Passing", "Rushing", "Receiving", "Kicking", "Returning", "Punting", "Defense", "Division Comparison"]
     i = 0
-    print(Titles[0])
-    print(team_dfs[0])
     for df in team_dfs:
         print(Titles[i])
         print(df)
