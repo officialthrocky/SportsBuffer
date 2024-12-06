@@ -40,6 +40,7 @@ class CSVTableViewer(QMainWindow):
         self.table_selector.currentIndexChanged.connect(self.switch_table)
         table_and_menu_layout.addWidget(self.table_selector)
 
+        # Label for currently selected team
         # Input Box
         self.input_box = QLineEdit(self)
         self.input_box.setPlaceholderText("Enter Team Name Here.")
@@ -57,8 +58,9 @@ class CSVTableViewer(QMainWindow):
 
         # Stored Text Box
         self.stored_text = QTextEdit(self)
-        self.stored_text.setPlaceholderText("Relevant Team Information")
-        self.stored_text.setReadOnly(True)
+        self.stored_text.setPlaceholderText("Team Name: Dallas Cowboys\nOwner: Jerry Jones\nHead Coach: Mike McCarthy\nOffensive Coordinator: Brian Schottenheimer\nDefensive Coordinator: Dan Quinn\nSpecial Teams Coord.: John Fassel\n")
+        self.stored_text.setPlainText("Team Name: Dallas Cowboys\nOwner: Jerry Jones\nHead Coach: Mike McCarthy\nOffensive Coordinator: Brian Schottenheimer\nDefensive Coordinator: Dan Quinn\nSpecial Teams Coord.: John Fassel\n")
+        self.stored_text.setReadOnly(False)
 
         # Add to Main Layout
         main_layout.addLayout(table_and_menu_layout, 3)
@@ -91,6 +93,11 @@ class CSVTableViewer(QMainWindow):
 
         df = pd.read_csv(csv_file)
         self.populate_table(df)
+
+    def update_text(self, team_name = "Cowboys"):
+        df = pd.read_csv("Data/"+ team_name + "/" + team_name + "_info.csv")
+        line = f"Selected Team: {df.iloc[0,0]} {df.iloc[0,1]}\nOwner: {df.iloc[0,2]}\nHead Coach: {df.iloc[0,3]}\nOffensive Coordinator: {df.iloc[0,4]}\nDefensive Coordinator: {df.iloc[0,5]}\nSpecial Teams: {df.iloc[0,6]}"
+        self.stored_text.setPlainText(line) 
 
     def populate_table(self, df):
         """
@@ -131,12 +138,15 @@ class CSVTableViewer(QMainWindow):
         # Load current CSV into a DataFrame
         df = pd.read_csv(self.current_csv_file)
 
+
         # Save back to CSV and refresh the table
         self.populate_table(df)
         self.input_box.clear()
+
         # Manually refresh the selector to show newly updated stats in table
         self.table_selector.setCurrentIndex(1)
         self.table_selector.setCurrentIndex(0)
+        self.update_text(user_input)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
