@@ -1,9 +1,7 @@
 import sys
-import json
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import numpy as np
 
 ## Links to main HTML Data files for a teams current season stats
 data_sources = {
