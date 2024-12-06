@@ -2,6 +2,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import os
 
 ## Links to main HTML Data files for a teams current season stats
 data_sources = {
@@ -34,9 +35,20 @@ data_sources = {
     "Steelers" : "https://sports.yahoo.com/nfl/teams/pittsburgh/stats/",
     "49ers" : "https://sports.yahoo.com/nfl/teams/san-francisco/stats/",
     "Seahawks" : "https://sports.yahoo.com/nfl/teams/seattle/stats/",
-    "Buccaneers" : "https://sports.yahoo.com/nfl/teams/tampa/stats/",
+    "Buccaneers" : "https://sports.yahoo.com/nfl/teams/tampa-bay/stats/",
     "Titans" :  "https://sports.yahoo.com/nfl/teams/tennessee/stats/",
     "Commanders" : "https://sports.yahoo.com/nfl/teams/washington/stats",
+}
+
+Titles = {
+   0 : "Passing",
+   1 : "Rushing",
+   2 : "Receiving",
+   3 : "Kicking",
+   4 : "Returning",
+   5 : "Punting",
+   6 : "Defense",
+   7 : "Division Comparison"
 }
 
 # Takes in a url, returns a list of relevant data frames as follows,
@@ -47,9 +59,12 @@ def scrape_tables_by_url(url):
         page_content = response.text
     else:
         print(f"Failed to retrieve the page. Status code: {response.status_code}")
+
     soup = BeautifulSoup(page_content, 'html.parser')
     tables = soup.find_all('table')
     return tables
+
+
 
 def table_to_df(table):
     # Initialize an empty list to store rows
@@ -83,21 +98,40 @@ def dataframes_for_team(teamname):
     return dataframes
 
 def print_team_dataframes(team_dfs):
-    Titles = ["Passing", "Rushing", "Receiving", "Kicking", "Returning", "Punting", "Defense", "Division Comparison"]
     i = 0
-    for df in team_dfs:
-        print(Titles[i])
-        print(df)
+    for key, value in Titles.items():
+        print(value)
+        print(team_dfs[key])
         print()
-        i = i + 1
+
+def save_df_to_csv(team_name, team_dfs):
+    if (len(sys.argv) > 2):
+        folder_path = team_name
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        for key, value in Titles.items():
+            if value == sys.argv[2]:
+                team_dfs[key].to_csv(os.path.join(team_name,f"{team_name}_{value}_stats.csv"), index = False)
+    else:
+        folder_path = team_name
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        for key, value in Titles.items():
+            team_dfs[key].to_csv(os.path.join(team_name,f"{team_name}_{value}_stats.csv"), index = False)
 
 def main():
+    choice = input("Would you like to save these updated stats to a csv? (y/n): ")
     if len(sys.argv) > 1:
         team_dataframes = dataframes_for_team(sys.argv[1])
+        if choice.lower() == 'y':
+            save_df_to_csv(sys.argv[1],team_dataframes)
+            print(f"{sys.argv[1]} Updated Successfully.")
     else:
-        team = input("Enter in the team mascot: ")
-        team_dataframes = dataframes_for_team(team)
-    print_team_dataframes(team_dataframes)
+        for key, value in data_sources.items():
+            team_dataframes = dataframes_for_team(key)
+            if choice.lower() == 'y':
+                save_df_to_csv(key,team_dataframes)
+                print(f"{key} Updated Successfully.")
 
 if __name__ == '__main__':
     main()
