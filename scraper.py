@@ -106,18 +106,18 @@ def print_team_dataframes(team_dfs):
 
 def save_df_to_csv(team_name, team_dfs):
     if (len(sys.argv) > 2):
-        folder_path = team_name
+        folder_path = "Data/"+team_name
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
         for key, value in Titles.items():
             if value == sys.argv[2]:
-                team_dfs[key].to_csv(os.path.join(team_name,f"{team_name}_{value}_stats.csv"), index = False)
+                team_dfs[key].to_csv(os.path.join("Data/"+team_name,f"{team_name}_{value}_stats.csv"), index = False)
     else:
-        folder_path = team_name
+        folder_path = "Data/"+team_name
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
         for key, value in Titles.items():
-            team_dfs[key].to_csv(os.path.join(team_name,f"{team_name}_{value}_stats.csv"), index = False)
+            team_dfs[key].to_csv(os.path.join("Data/"+team_name,f"{team_name}_{value}_stats.csv"), index = False)
 
 def main():
     choice = input("Would you like to save these updated stats to a csv? (y/n): ")

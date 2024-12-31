@@ -58,8 +58,8 @@ class CSVTableViewer(QMainWindow):
 
         # Stored Text Box
         self.stored_text = QTextEdit(self)
-        self.stored_text.setPlaceholderText("Team Name: Dallas Cowboys\nOwner: Jerry Jones\nHead Coach: Mike McCarthy\nOffensive Coordinator: Brian Schottenheimer\nDefensive Coordinator: Dan Quinn\nSpecial Teams Coord.: John Fassel\n")
-        self.stored_text.setPlainText("Team Name: Dallas Cowboys\nOwner: Jerry Jones\nHead Coach: Mike McCarthy\nOffensive Coordinator: Brian Schottenheimer\nDefensive Coordinator: Dan Quinn\nSpecial Teams Coord.: John Fassel\n")
+        self.stored_text.setPlaceholderText("Selected Team: Dallas Cowboys\nOwner: Mike McCarthy\nHead Coach: Brian Schottenheimer\nOffensive Coordinator: Mike Zimmer\nDefensive Coordinator: Jerry Jones")
+        self.stored_text.setPlainText("Selected Team: Dallas Cowboys\nOwner: Mike McCarthy\nHead Coach: Brian Schottenheimer\nOffensive Coordinator: Mike Zimmer\nDefensive Coordinator: Jerry Jones")
         self.stored_text.setReadOnly(False)
 
         # Add to Main Layout
@@ -95,8 +95,9 @@ class CSVTableViewer(QMainWindow):
         self.populate_table(df)
 
     def update_text(self, team_name = "Cowboys"):
-        df = pd.read_csv("Data/"+ team_name + "/" + team_name + "_info.csv")
-        line = f"Selected Team: {df.iloc[0,0]} {df.iloc[0,1]}\nOwner: {df.iloc[0,2]}\nHead Coach: {df.iloc[0,3]}\nOffensive Coordinator: {df.iloc[0,4]}\nDefensive Coordinator: {df.iloc[0,5]}\nSpecial Teams: {df.iloc[0,6]}"
+        df = pd.read_csv("Data/team_office_info.csv")
+        row_index = df.index.get_loc(df[df["Team"] == team_name].index[0])
+        line = f"Selected Team: {df.iloc[row_index,1]} {df.iloc[row_index,0]}\nOwner: {df.iloc[row_index,2]}\nHead Coach: {df.iloc[row_index,3]}\nOffensive Coordinator: {df.iloc[row_index,4]}\nDefensive Coordinator: {df.iloc[row_index,5]}"
         self.stored_text.setPlainText(line) 
 
     def populate_table(self, df):
